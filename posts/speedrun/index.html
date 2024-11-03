@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- not sure if this is good or bad for mobile
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <title>Speeding through misc stuff · Pagwin's website</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/colors.css" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/index.xml">
+    <script type="module" src="/static/js/code_highlighting.mjs"></script>
+</head>
+
+<body class="light">
+    <!-- originally handled dark v light via js but decided it would be better to just do it all in css and have no toggle 8a7917a0cd34bd7637d9a9a8ad327e4b847cdeed is the last commit where I had the system setup -->
+    <div id="header">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/posts/">Blog Posts</a>
+        <a class="nav-link" href="/links/">Links</a>
+    </div>
+    <div id="content-outer">
+        <div id="content">
+            <h1
+                style="font-variant: small-caps;text-align: justify; -moz-text-align-last: center; text-align-last: center;">
+                Speeding through misc stuff</h1>
+            <div class="info">
+    2023-11-11
+</div>
+<hr>
+</hr>
+<h1 id="speedrun-time">Speedrun time</h1>
+<p>Alright I have stuff in the git repo for this website and in my head
+that I want to get out so let’s go.</p>
+<h2 id="this-blog-is-run-via-a-docker-container-now">This blog is run
+via a docker container now</h2>
+<p>I was planning on adding comments which meant doing more than static
+files so it made sense to do that comments system via docker and to make
+deployment consistent I setup the base website to work via docker as
+well, unfortunately the comment system died at the last hurdle of
+sending out email(s) to verify a user’s email but whatever it’s
+suffieciently close to done that I’ll probably finish it later.</p>
+<h2 id="numbers-with-finite-vs-infinite-kolmogorov-complexity">Numbers
+with finite vs infinite kolmogorov complexity</h2>
+<p>This is a blog post in the website git repo it’s pretty much fully
+written but I decided I didn’t want to publish it fully. You’ll find the
+markdown <a
+href="https://github.com/Pagwin-Fedora/website/blob/master/content/blog/finite_KCMP_nums.md">here</a>.
+To describe the idea in brief for any mathematical object you can either
+describe it with a program written in a turing complete program that
+takes up a finite amount of space or you can’t. If you can and the value
+you get as you run the program for an arbitrarily large number of steps
+is well defined then it has finite kolmogorove complexity and if you
+can’t it has infinite. The blog post describes why the well defined part
+is needed as well as a badly written proof for why the set of all real
+numbers with finite kolmogorov complexity has the same cardinality as
+the intgers and ends with unfalsifiable nonsense conjecture about the
+universe. Sidenote: if you try to brute force the value of ψ (as
+described in the full post) you’ll find that the cardinality of the set
+of all possible values for ψ is the same as for the Real numbers which
+is amusing.</p>
+<h2 id="remember-pogo">Remember pogo?</h2>
+<p>Lol I redid it again and wrote a blog post on it but didn’t publish
+it so that’s amusing.</p>
+<h2 id="music-notation">Music notation</h2>
+<p>So about a week ago I saw <a
+href="https://www.youtube.com/watch?v=Eq3bUFgEcb4">this tantacrul
+video</a> and towards the start of it I decided to come up with a new
+music notation for fun. I yeeted the notes because I thought arbitrary
+symbols seemed dumb made use of color to communicate things like sharps
+and other symbols while keeping the current number of bars. Here’s what
+I wrote down with little to no influence from the video.</p>
+<pre><code>rather than arbitrary symbols lets use lines
+length is encoded via the length of a line
+pitch is encoded via the vertical position of a line
+lines without any modifiers are colored red
+blue lines are used when a note is sharp
+green when flat
+purple, orange, dark cyan and gold remaining for various other things
+
+greyscale colors can&#39;t be used for line colors because black and white are the background and they don&#39;t stand out enough of particular note white can&#39;t be used because it&#39;s used for spacing things meaning it could be misconstrued as the space between notes/dashing it can make 1 note look like multiple notes and black is needed for clarification in things like pitch and possibly the end of one note and the beginning of another due to it possibly being difficult to tell when a note ends and another begins if they&#39;re similar pitch
+
+if a note needs multiple specifiers those specifiers should be dashed with each other aka they should alternate back and forth at a regular interval, if it needs multiple of the same specifier lines of the needed color should branch out of the line at the start of the line
+
+if multiple notes with different pitches need to be played you draw multiple lines
+
+another thing that can be used to specify information about a note is the shape of the front and back of the line, pointed, rounded and block are all shapes that can be taken, different specifiers can be used at the beginning and end of a line but these specifiers should only be used for things that are relevant at the beginning and end of a note respectively
+
+all notes need to end in a black endpoint to visually clarify the end of a note
+
+background staff I think it&#39;s called is kept the same so pitch is clear</code></pre>
+<p>After watching the video I realized that I had reinvented piano bars
+and that I left a lot unspecified and had 2 problem, 1) short notes are
+hard to diferentiate from each other 2) this setup screws over color
+blind people. There are hacky solutions to those problems and I could
+work on making this system more complete but I did it for fun and I’m
+bored of it now so I won’t.</p>
+<h2 id="im-dipping-my-toes-in-haskell-and-i-made-a-monstrosity">I’m
+dipping my toes in haskell and I made a monstrosity</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode hs"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">SubShell</span> <span class="ot">=</span> <span class="dt">S</span> <span class="dt">Integer</span> <span class="dt">Integer</span> <span class="op">|</span> <span class="dt">P</span> <span class="dt">Integer</span> <span class="dt">Integer</span> <span class="op">|</span> <span class="dt">D</span> <span class="dt">Integer</span> <span class="dt">Integer</span> <span class="op">|</span> <span class="dt">F</span> <span class="dt">Integer</span> <span class="dt">Integer</span> <span class="kw">deriving</span> (<span class="dt">Show</span>, <span class="dt">Eq</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Ord</span> <span class="dt">SubShell</span> <span class="kw">where</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">S</span> l1 _ <span class="op">&lt;=</span> <span class="dt">P</span> l2 _ <span class="op">|</span> l1<span class="op">==</span>l2 <span class="ot">=</span> <span class="dt">True</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">S</span> l1 _ <span class="op">&lt;=</span> <span class="dt">D</span> l2 _ <span class="op">|</span> l1<span class="op">==</span>l2 <span class="ot">=</span> <span class="dt">True</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">S</span> l1 _ <span class="op">&lt;=</span> <span class="dt">F</span> l2 _ <span class="op">|</span> l1<span class="op">==</span>l2 <span class="ot">=</span> <span class="dt">True</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">P</span> l1 _ <span class="op">&lt;=</span> <span class="dt">D</span> l2 _ <span class="op">|</span> l1<span class="op">==</span>l2 <span class="ot">=</span> <span class="dt">True</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">P</span> l1 _ <span class="op">&lt;=</span> <span class="dt">F</span> l2 _ <span class="op">|</span> l1<span class="op">==</span>l2 <span class="ot">=</span> <span class="dt">True</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">D</span> l1 _ <span class="op">&lt;=</span> <span class="dt">F</span> l2 _ <span class="op">|</span> l1<span class="op">==</span>l2 <span class="ot">=</span> <span class="dt">True</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">S</span> l1 _ <span class="op">&lt;=</span> <span class="dt">S</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">S</span> l1 _ <span class="op">&lt;=</span> <span class="dt">P</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">S</span> l1 _ <span class="op">&lt;=</span> <span class="dt">D</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">S</span> l1 _ <span class="op">&lt;=</span> <span class="dt">F</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">P</span> l1 _ <span class="op">&lt;=</span> <span class="dt">S</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">P</span> l1 _ <span class="op">&lt;=</span> <span class="dt">P</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">P</span> l1 _ <span class="op">&lt;=</span> <span class="dt">D</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">P</span> l1 _ <span class="op">&lt;=</span> <span class="dt">F</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">D</span> l1 _ <span class="op">&lt;=</span> <span class="dt">S</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">D</span> l1 _ <span class="op">&lt;=</span> <span class="dt">P</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">D</span> l1 _ <span class="op">&lt;=</span> <span class="dt">D</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">D</span> l1 _ <span class="op">&lt;=</span> <span class="dt">F</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">F</span> l1 _ <span class="op">&lt;=</span> <span class="dt">S</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">F</span> l1 _ <span class="op">&lt;=</span> <span class="dt">P</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">F</span> l1 _ <span class="op">&lt;=</span> <span class="dt">D</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">F</span> l1 _ <span class="op">&lt;=</span> <span class="dt">F</span> l2 _  <span class="ot">=</span> l1 <span class="op">&lt;=</span> l2</span></code></pre></div>
+<p>:) this was for modeling electron subshells btw here’s a <a
+href="https://gist.github.com/Pagwin-Fedora/07042faaa3e5ae275652874b47cb969f">gist</a>
+with the full program.</p>
+<h2 id="the-fractions-sidequest-continues">The fractions sidequest
+continues</h2>
+<p>After my <a href="https://pagwin.xyz/blog/fractions_sidequest/">blog
+post</a> on optimizing this I’ve gone further by implementing the ideas
+I suggested at the end. At this point I believe my choke points are the
+progress bar (if I remove it I’ll get a 2x speedup lol), the queue (I’m
+thinking of implementing it myself to use a fixed buffer which it goes
+through in a circle/ring and uses a couple of <a
+href="https://doc.rust-lang.org/std/sync/atomic/struct.AtomicUsize.html">AtomicUsize</a>
+values) and doing IO (I don’t think I can speed this up very much
+unfortunately).</p>
+<h2 id="my-writing-sucks">My writing sucks</h2>
+<p>My sentences go on for too long and I generally think I ramble a bit
+too much but I also don’t want to do a lot of editing for these blogs
+because I like just writing them in a flow state and doing editing later
+is very boring/unfun &gt;:(.</p>
+<h2 id="microblogging-hmmmmmmm">Microblogging hmmmmmmm</h2>
+<p>I’ve been thinking of setting up my own mastodon instance recently
+but I want everything including th mastodon instance in containers so I
+can pack up and move servers easily and I’m not sure how to do that with
+mastodon. Not sure if I wanna do that though because I wouldn’t use it
+that much and I like being able to direct my writing energy into macro
+blog posts and more blog posts like this one. I suspect this won’t be
+the last time I use this format. Anyways that’s all folks I hope you
+have a nice day.</p>
+
+        </div>
+    </div>
+    <div id="footer">
+    </div>
+</body>
+
+</html>

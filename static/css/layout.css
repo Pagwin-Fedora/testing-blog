@@ -1,0 +1,116 @@
+@layer pre-load, baseline, print;
+
+@layer baseline {
+body {
+    padding: 0px;
+    margin: 0px;
+    font-family: Georgia, serif;
+}
+
+
+a {
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#header {
+    box-sizing: border-box;
+    display: flex;
+    flex-flow: row nowrap;
+    gap: 0.5em;
+    align-items: center;
+    width: 100%;
+    font-size: 24px;
+    padding: 0.5em 1em;
+    position: fixed;
+}
+#content {
+    box-sizing: border-box;
+    display: block flex;
+    margin: calc(24px + 3em) 1em 1em 1em;
+    padding: 1em;
+    /* needed due to flex parent*/
+    width: 100%;
+    /*https://ux.stackexchange.com/a/34125*/
+    /*https://ux.stackexchange.com/a/34148*/
+    /*https://pearsonified.com/golden-ratio-typography-intro/*/
+    /*https://grtcalculator.com/*/
+    max-width: 55em;
+    border-radius: 0.5em;
+
+    /* needed due to being flex itself*/
+    flex-direction:column;
+    /* put things in center*/
+    /* not sure if I want everything centered or just code blocks but I like everything centered atm*/
+    justify-content: center;
+    align-items: center;
+}
+blockquote {
+    /*font-style: italic;*/
+    padding: 0.5em 1em;
+    border-radius: 0.5em;
+    p{
+        /*margin is annoying in this case*/
+        margin: 0;
+    }
+}
+#content-outer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+pre {
+    box-sizing: border-box;
+    min-height: 2em;
+    /* 
+     * previously a cludge of 75 em this is now a cludge of 2 different vendor extensions
+     * 
+     * */
+    max-width: -moz-available;
+    max-width: -webkit-fill-available;;
+    max-width: fill-available;
+    width: fit-content;
+    overflow:scroll;
+    /*background: #444;*/
+    border-radius: 0.5em;
+    /*border: 0.2em solid red;*/
+    padding: 0.5em;
+}
+
+hr {
+    box-sizing: border-box;
+    width: 100%;
+}
+
+p {
+    /*https://pearsonified.com/golden-ratio-typography-intro/ is where this came from and tbh having a bigger line height does make things more readable although I tune it down a bit*/
+    line-height: 1.5;
+}
+}
+/* we really want to make sure this doesn't stick around when colors load in regardless of when/how colors get loaded in*/
+@layer pre-load{
+    #content {
+        border: 0.5em solid white;
+    }
+}
+/* I mean why not? */
+@media print {
+@layer print{
+
+#header {
+    visibility: hidden;
+}
+#content {
+    border-style: none;
+}
+pre {
+    page-break-inside: avoid;
+}
+
+}
+}

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- not sure if this is good or bad for mobile
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <title>Pogo so far · Pagwin's website</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/colors.css" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/index.xml">
+    <script type="module" src="/static/js/code_highlighting.mjs"></script>
+</head>
+
+<body class="light">
+    <!-- originally handled dark v light via js but decided it would be better to just do it all in css and have no toggle 8a7917a0cd34bd7637d9a9a8ad327e4b847cdeed is the last commit where I had the system setup -->
+    <div id="header">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/posts/">Blog Posts</a>
+        <a class="nav-link" href="/links/">Links</a>
+    </div>
+    <div id="content-outer">
+        <div id="content">
+            <h1
+                style="font-variant: small-caps;text-align: justify; -moz-text-align-last: center; text-align-last: center;">
+                Pogo so far</h1>
+            <div class="info">
+    2022-01-31
+</div>
+<hr>
+</hr>
+<p>So in <a href="https://pagwin.xyz/blog/gh_actions/">My last blog</a>,
+I briefly mentioned a project I’m working on called <a
+href="https://github.com/Pagwin-Fedora/Pogo">Pogo</a> and then said
+absolutely nothing about what it actually is or what I was going to do
+with it. I did say I wanted to write a blog article on it though and
+this is that blog article.</p>
+<h2 id="what-is-pogo">What is Pogo?</h2>
+<p><a href="https://github.com/Pagwin-Fedora/Pogo">Pogo</a> is a todo
+list I’m working on that I wanted to use as an excuse to learn</p>
+<ol type="1">
+<li><a href="https://go.dev/">Go</a></li>
+<li><a href="https://www.rust-lang.org/">Rust</a>’s FFI</li>
+<li>how to store and retrieve data with <a
+href="https://en.wikipedia.org/wiki/SQL">SQL</a> queries/statements</li>
+<li>how to make UI in <a href="https://dart.dev/">Dart</a>/<a
+href="https://flutter.dev/">Flutter</a></li>
+<li>and how to write <a
+href="https://www.goya.com/media/4173/creole-spaghetti.jpg?quality=80">Sphaghetti</a>
+in C++</li>
+</ol>
+<p>I put it this all toegether with copious usage of FFI to connect the
+Rust, Go and <a href="https://en.wikipedia.org/wiki/C%2B%2B">C++</a> for
+the backend and the dart/flutter for the frontend.</p>
+<h2 id="problems">Problems</h2>
+<p>But recently I’ve decided that all of that is dumb and unnecessary.
+Initially it made sense to use the somewhat unwieldy FFI setup because
+the backend was going to take a struct instead of a string and structs
+cannot be passed via stdin<sup>[citation needed]</sup>. Once I realized
+how hard and unnecessary that was due to FFI things I dropped it. With
+that my architecture was just passing around strings and I realized that
+my setup is overly complicated for that. So instead of FFI and TCP
+spaghetti instead I’m going to have <del>subprocess spaghetti</del> each
+component of the application be separate executables of some kind or
+another.</p>
+<h2 id="the-new-architecture">The New Architecture</h2>
+<p>This description is going to suck so I recommend clicking off if you
+get bored. For my new architecture there will be 5 components</p>
+<ol type="1">
+<li>The init script</li>
+<li>The frontend</li>
+<li>the front-to-back middleware</li>
+<li>the back-to-front middleware</li>
+<li>and The backend.</li>
+</ol>
+<p>The original repository that held all the code will have it all
+removed as the frontend, middleware and backend are developed in
+separate repositories which are had as git submodules in the main
+repository which will be where an init script and a build script will be
+held.</p>
+<h3 id="the-init-script">The init script</h3>
+<p>The init script is a script that will be running as long as the
+application itself holding the frontend, middleware and backend as child
+processes.</p>
+<h3 id="the-frontend">The frontend</h3>
+<p>The frontend will accept user input and print it to stdout in a
+manner understood by the middleware and passing state changes given to
+it as Pogo messages by stdin to the user.</p>
+<h3 id="the-middleware">The middleware</h3>
+<p>The front to back middleware will take messages from the frontend and
+parse them for the backend to understand and vice versa for back to
+front.</p>
+<h3 id="the-backend">The backend</h3>
+<p>The backend takes messages from stdin and does transforms to the db
+and accepts queries of it’s current state printing out the state to
+stdout.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>I expected this blog to be longer but I realized as I started to
+write it that writing about what I had previously done with Pogo was
+boring because it was nothing interesting. Well there is some
+interesting stuff in how I previously was working on Pogo but most of
+that is too tangential for a post on the project itself such as how bad
+C/C++ networking is, how good networking is with rust after I stopped
+being an idiot, doing battle with Go’s sql library and stuff related to
+FFI. I may make a blog post or two on these topics in the future but I
+still need to learn more about them to do them justice. Overall the post
+was a bit painful to write and I suspect it’s also painful to read. Note
+to self write about a project as interesting stuff comes up not to
+explain yourself.</p>
+
+        </div>
+    </div>
+    <div id="footer">
+    </div>
+</body>
+
+</html>

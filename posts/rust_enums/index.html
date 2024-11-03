@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- not sure if this is good or bad for mobile
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <title>Rust Match and Enums · Pagwin's website</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/colors.css" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/index.xml">
+    <script type="module" src="/static/js/code_highlighting.mjs"></script>
+</head>
+
+<body class="light">
+    <!-- originally handled dark v light via js but decided it would be better to just do it all in css and have no toggle 8a7917a0cd34bd7637d9a9a8ad327e4b847cdeed is the last commit where I had the system setup -->
+    <div id="header">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/posts/">Blog Posts</a>
+        <a class="nav-link" href="/links/">Links</a>
+    </div>
+    <div id="content-outer">
+        <div id="content">
+            <h1
+                style="font-variant: small-caps;text-align: justify; -moz-text-align-last: center; text-align-last: center;">
+                Rust Match and Enums</h1>
+            <div class="info">
+    2022-09-06
+</div>
+<hr>
+</hr>
+<p>As the description of this article says I wrote this to try and
+probably fail to win an argument. Namely, a friend <del>argued</del>
+asked “Why use rust enums just use an interface and manual type checks?”
+specifically the context was me advocating for the use of rust enums
+instead of C’s union types. Example:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode dart"><code class="sourceCode dart"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">String</span> anything(<span class="dt">Object</span> something) <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(something <span class="kw">is</span> <span class="dt">bool</span>)<span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>	    <span class="cf">if</span>(something) <span class="kw">return</span> <span class="st">&quot;fizz&quot;</span>;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>	    <span class="kw">return</span> <span class="st">&quot;buzz&quot;</span>;</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(something <span class="kw">is</span> <span class="dt">int</span>)<span class="op">{</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>	    <span class="cf">if</span>(something <span class="op">&lt;</span> <span class="dv">10</span>) <span class="kw">return</span> <span class="st">&quot;smol&quot;</span>;</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>	    <span class="cf">if</span>(something <span class="op">&lt;</span> <span class="dv">20</span>) <span class="kw">return</span> <span class="st">&quot;Mcdonald&#39;s medium&quot;</span>;</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>	    <span class="kw">return</span> <span class="st">&quot;LARGE&quot;</span>;</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> <span class="st">&quot;$something&quot;</span>;</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Personally, I think this is a bad solution to the problem of having
+multiple valid types for something generally speaking. Specifically
+speaking taking an argument which we only know implements some interface
+can be good.</p>
+<h2 id="rust-enum-example">Rust enum example</h2>
+<p>But I haven’t made any arguments for my position yet I’ve just
+specified how you can go without C’s unions which are terrible and you
+should never use them outside of the implementation of something that
+solves the problem in a better way. What makes rust enums great for this
+use case is that we are explicitly limiting what can be passed in at
+compile time and are being explicit about what we want and why. The rust
+equivalent to that example is</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">//why a 128 bit integer and not just a 64 bit? Well because I wanted to show off that rust has that that&#39;s why</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> OurEnum<span class="op">{</span>InterviewQuestion(<span class="dt">bool</span>)<span class="op">,</span> FastFoodOrder(<span class="dt">u128</span>)<span class="op">,</span> Other(<span class="dt">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="bu">Display</span><span class="op">&gt;</span>)<span class="op">}</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">fn</span> anything(something<span class="op">:</span>OurEnum)<span class="op">-&gt;</span><span class="dt">String</span><span class="op">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">match</span> OurEnum<span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>	    InterviewQuestion(<span class="cn">true</span>)<span class="op">=&gt;{</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>		    <span class="st">&quot;fizz&quot;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>	    <span class="op">},</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>	    InterviewQuestion(<span class="cn">false</span>) <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>		    <span class="st">&quot;buzz&quot;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>	    <span class="op">}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        FastFoodOrder(size_index) <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> size_index <span class="op">&lt;</span> <span class="dv">10</span> <span class="op">{</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;smol&quot;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span> <span class="cf">if</span> size_index <span class="op">&lt;</span> <span class="dv">20</span> <span class="op">{</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;McDonald&#39;s medium&quot;</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;LARGE&quot;</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>            <span class="op">}.</span>into()</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        <span class="op">},</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        Other(displayable) <span class="op">=&gt;</span> <span class="op">{</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>            <span class="pp">format!</span>(<span class="st">&quot;{}&quot;</span><span class="op">,</span> displayable)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>   <span class="op">}</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Now you might be saying “oh my god that’s way more verbose why would
+I want that?!?!”. The reason you want that is because all that verbosity
+provides more information to people who have to deal with this code in
+the future <del>and also partially due to rust having &amp;str and
+String as different things as well as me showing off a bit</del>. So
+what new information do we get with this code that we don’t get with the
+Dart code?</p>
+<h2 id="each-case-has-a-name">Each case has a name</h2>
+<p>As the section title says each case has a name, now someone reading
+this code knows that our boolean case corresponds to InterviewQuestion
+whatever that may mean in a larger context. This also means that if we
+want different things for the same type under certain conditions we just
+need to add something to the enum.</p>
+<h2 id="happy-little-compiler-errors">Happy little compiler errors</h2>
+<p>In addition to the whole deal of enums helping self-document they
+also make it so if we fuck up we get a compiler error unless we use if
+let or _ but if you use those you are your own worst enemy. This also
+makes it so if we add a case we can’t compile the code unless we handle
+that case everywhere we’re doing stuff with our Enum. What this also
+means is that if we only wanted to handle booleans and unsigned integers
+we could do that without runtime errors.</p>
+<h2 id="oh-hey-i-implement-your-interface-now-fuck-you">Oh hey I
+implement your interface now fuck you</h2>
+<p>Oh yeah also with dart interfaces nothing is stopping someone from
+just implementing the interface you take as an argument and just sending
+that to your function that takes that interface which would just
+completely mess everything up.</p>
+<h2 id="bonus-points">Bonus points</h2>
+<p>These are more cool things with this code but they aren’t as closely
+related to enums.</p>
+<h3 id="match-being-awesome">Match being awesome</h3>
+<p>So you may notice that OurEnum::InterviewQuestion is referred to
+twice, the reason for that is that match allows you to rather than
+capture the value in an enum in a variable, just check if the value
+inside that case of the enum is some specified value, in this case, it’d
+be more convenient to just capture and use if else but it’s still cool
+that we don’t have to.</p>
+<h3 id="hello-interface-my-old-friend">Hello Interface my old
+friend</h3>
+<p>So remember how I said we shouldn’t use an interface for this but
+interfaces can be useful in other cases. Well, the Other case for
+OurEnum is using an interface. Oh sorry, it’s using a “trait”, more
+specifically a trait object but the details of that go over my head so
+yeah it’s an interface. In this case, we’re specifying that we only want
+things that implement <a
+href="https://doc.rust-lang.org/std/fmt/trait.Display.html">Display</a>.
+What this means is that we can display it as a string. That may seem
+obvious but some datatypes may for some reason or another not play
+nicely with the idea of being displayed like that which won’t implement
+the Display trait meaning it can’t be given as an input to this
+function.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Accept it person I’m arguing with Rust enums are superior, if anyone
+complains about a lack of C Unions in Dart maybe consider suggesting
+Rust enums… or just copy <a
+href="https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#union-types">typescript’s
+unions</a> which is probably what these people are actually advocating
+for and tbh while technically inferior to rust enums has its own
+merits.</p>
+<h2 id="is-how-i-wouldve-ended-it">Is how I would’ve ended it</h2>
+<p>But arguments/discussions aren’t one sided like that and I chatted
+with the person shortly after writing this article and they made an
+interesting point.</p>
+<h2 id="if-the-type-fits-you-should-accept-it">If the type fits you
+should accept it</h2>
+<p>This is a rebuke to my “Oh hey I implement your interface now, fuck
+you” and is simply asking how that’s a problem. After all the interface
+should specify what you need from some data type to be able to use it in
+some application. This also moves the control flow of which code to run
+outside of the method taking in data. Combined with the idea that the
+interface setup can also give compiler errors where it makes sense the
+question has to be now be asked why are rust enums preferable?</p>
+<h2 id="welll-uuuuuuuuuuuuh">welll uuuuuuuuuuuuh</h2>
+<p>When you have a finite number of states which may contain state
+within themselves and aren’t just representing different input types
+they’re pretty nice.</p>
+<h2 id="conclusion-2electric-boogaloo">Conclusion 2(Electric
+boogaloo)</h2>
+<p>Use interfaces when you want certain garantees about a type, use rust
+enums when you want a finite set of states.</p>
+
+        </div>
+    </div>
+    <div id="footer">
+    </div>
+</body>
+
+</html>

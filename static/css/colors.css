@@ -1,0 +1,106 @@
+@layer baseline, print;
+/* https://color.adobe.com/create/color-contrast-analyzer */
+/*dark theme*/
+@layer baseline{
+@media (prefers-color-scheme: dark) {
+:root {
+    --bg-color: #1c1b19;
+    /*
+     * #5ac
+     * */
+    --normal-text: #CCC;
+    --focus-outline-color: #f00;
+    --link-clicked: #B250D8;
+    --link-unclicked: #d80;
+    --header-bg: #333;
+    --nav-link-color: #6B0;
+    --content-border-color: #5ac;
+    /*stolen from code theme*/
+    --blockquote-bg: rgb(29, 31, 33);
+}
+}
+/*
+ *#ABABD4;
+ *bs-primary-bg-subtle: #cfe2ff;
+  --bs-secondary-bg-subtle: #e2e3e5;
+  --bs-success-bg-subtle: #d1e7dd;
+  --bs-info-bg-subtle: #cff4fc;
+  --bs-warning-bg-subtle: #fff3cd;
+  --bs-danger-bg-subtle: #f8d7da;
+  --bs-light-bg-subtle: #fcfcfd;
+ * */
+/*light theme*/
+@media (prefers-color-scheme: light) {
+:root {
+    --bg-color: #e2e3e5;
+    --normal-text: #000;
+    --focus-outline-color: #f00;
+    --link-unclicked: #2535B4;
+    --link-clicked: #832244;
+    /*#E6DDE6
+     * #dce2e5
+     *
+     * promising
+     * #b4d2ec*/
+
+    --header-bg: #dce5dc;
+    /*#841163
+     * #115e84*/
+    --nav-link-color: #118411;
+    --content-border-color: #026;
+    --blockquote-bg: #fff;
+}
+}
+}
+@layer baseline{
+body {
+    background: var(--bg-color);
+    color: var(--normal-text);
+}
+
+/*iffy if this should be here but it doesn't mess with the layout so I'll allow it*/
+:focus-visible {
+  outline: 2px solid var(--focus-outline-color);
+  border-radius: 0.25rem;
+}
+.nav-link {
+    color: var(--nav-link-color) !important;
+}
+
+a {
+    color: var(--link-unclicked);
+}
+
+a:visited {
+    color: var(--link-clicked);
+}
+
+#header {
+    background: var(--header-bg);
+}
+
+#content {
+    border: 0.5em solid var(--content-border-color);
+}
+
+blockquote {
+    background: var(--blockquote-bg);
+    strong {
+        color:red;
+    }
+}
+
+pre:has( > code) {
+    background: var(--blockquote-bg);
+}
+}
+@media print {
+@layer print{
+
+:root {
+    /*trying to avoid accidentally eating the entire printer's ink supply with bg color*/
+    --bg-color: #FFF;
+}
+
+}
+}

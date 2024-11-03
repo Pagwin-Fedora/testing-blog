@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- not sure if this is good or bad for mobile
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <title>Mineflayer pains · Pagwin's website</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/colors.css" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/index.xml">
+    <script type="module" src="/static/js/code_highlighting.mjs"></script>
+</head>
+
+<body class="light">
+    <!-- originally handled dark v light via js but decided it would be better to just do it all in css and have no toggle 8a7917a0cd34bd7637d9a9a8ad327e4b847cdeed is the last commit where I had the system setup -->
+    <div id="header">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/posts/">Blog Posts</a>
+        <a class="nav-link" href="/links/">Links</a>
+    </div>
+    <div id="content-outer">
+        <div id="content">
+            <h1
+                style="font-variant: small-caps;text-align: justify; -moz-text-align-last: center; text-align-last: center;">
+                Mineflayer pains</h1>
+            <div class="info">
+    2021-01-10
+</div>
+<hr>
+</hr>
+<h2 id="preface">Preface</h2>
+<p>Given I’m gonna be complaining about <a
+href="https://github.com/PrismarineJS/mineflayer">mineflayer</a> you may
+be wondering why I don’t roll with something else given my complaints.
+The problem with that is that there is nothing else to my knowledge or
+at least nothing else high level, not even in other languages. There
+probably is and I just didn’t look hard enough but oh well. Also I
+would’ve built up my own thing from scratch but reverse
+engineering/reimplementing a network protocol without official docs and
+without even unofficial docs if you’re trying to do stuff with older
+versions is kinda hard and if you wanna see how far I got then you can
+look at the <a
+href="https://github.com/Pagwin-Fedora/McProtocolLearning">repo with my
+work</a> and I refused to work with the slightly lower level(relative to
+mineflayer) <a
+href="https://github.com/PrismarineJS/node-minecraft-protocol">node
+minecraft protocol</a>(made by the same person) because if I’m using
+someone else’s work I may as well go all the way to the highest level ##
+Why? Oh yeah I decided to make a minecraft bot because it seemed fun and
+it seems like there’s all sorts of room to implement cool stuff though
+the specifics of what I’m making will probably be covered in another
+block post. Anyways onto the problems with mineflayer ## constructor
+isn’t used to create an object Specifically the thing that’s a problem
+is that when you want to create a new <a
+href="https://github.com/PrismarineJS/mineflayer/blob/master/docs/api.md#bot">Bot</a>
+instance you need to call the method mineflayer.createBot. Why have a
+method completely detached from the object that makes a new instance of
+that object when you can just make it a constructor I have no idea. You
+may be wondering “what’s the big deal it’s a slightly different way to
+instantiate the object?” the problem with that being that if you try to
+make a subclass of <code>Bot</code> to add methods for your own purposes
+you have to do janky stuff to work around the constructor not being
+used. In my case I did</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> taskBot <span class="kw">extends</span> mineflayer<span class="op">.</span><span class="at">Bot</span>{</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>	<span class="op">...</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>	<span class="kw">constructor</span>(options<span class="op">:</span>mineflayer<span class="op">.</span><span class="at">BotOptions</span>){</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>		<span class="kw">const</span> bot <span class="op">=</span> mineflayer<span class="op">.</span><span class="fu">createBot</span>(options)<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>		<span class="kw">super</span>()</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>		<span class="bu">Object</span><span class="op">.</span><span class="fu">assign</span>(<span class="kw">this</span><span class="op">,</span>bot)<span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>		<span class="op">...</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>	}</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>	<span class="op">...</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p>by the way I’m using typescript in case you can’t tell which will
+lead to another couple of headaches I’ll get into soon but yeah using
+<code>Object.assign</code> is absolutely not ideal at all(an as of
+writing I have no idea if using this hack leads to problems I haven’t
+encountered yet). As an aside there’s no reason this problem couldn’t be
+fixed at least from the glances I’ve given to mineflayer’s source code.
+## different ways of having a point in 3d space passed to different
+functions I hate this with a firey passion and am very happy that it’s
+super easy to deal with this. Okay so you may be wondering “what’s the
+big fuss?” and I’ll tell you that different functions will take either a
+Vec3(I have a small gripe with Vec3 as well but that’s not worth making
+a fuss about) or 3 separate arguments specifying the x, y and z
+coordinates. Having these 2 approaches means that there isn’t a correct
+form to have positions stored in your program because you’ll have to
+deal with at least 1 form that isn’t the form you have them stored in
+anyways. This problem is an easy fix you can just have an array that
+stores 3 numbers in it and when you need a Vec3 or need to pass it into
+a function that takes 3 args use the spread operator as args to the
+function or the Vec3 constructor. ## typescript hell As I’ve already
+mentioned I’m using typescript for my own purposes. However with
+typescript there are a couple of problems that come up that are annoying
+to deal with. Plugins and minecraft-data. ## Plugins My gripe with
+plugins can be further subdivided into how plugins add attributes to the
+<code>Bot</code> instance and how they have the <code>Bot</code>
+instance emit new events. The first problem is that the <code>Bot</code>
+type has a set of attributes that typescript knows about but when you
+load a plugin for the Bot instance to do something like add pathfinding
+abilities a new attribute is added to the bot that has all the new
+abilities within it but typescript doesn’t know that the
+<code>Bot</code> instance has a new attribute. The solution I found for
+this which also removed a bit of complexity from the code was to make a
+subclass of Bot and add in the plugin attributes as needed which led to
+the problem already described above involving the constructor. My second
+problem with the events was that typescript also keeps track of what
+events an event emitter will emit so if you try to listen for an event
+it won’t emit it’ll give you an error. But again when you run a
+<code>Bot</code> instance through a plugin it’s type doesn’t change so
+it doesn’t get any of it’s new events. Sadly the solution for this
+required me to commit what’s effectively a typescript sin.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>(<span class="kw">this</span> <span class="im">as</span> <span class="dt">any</span>)<span class="op">.</span><span class="fu">once</span>(<span class="op">...</span>)</span></code></pre></div>
+<p>I think I heard an angel die. Of course I personally don’t blame
+these typescript problems on the developer because 1)they wrote this in
+javascript and mistakes can happen and 2) I don’t know how I’d solve
+them so yeah. ## minecraft-data this one’s short, basically there isn’t
+an easy way to get the type for the object you get when you provide your
+minecraft version to the <code>minecraft-data</code> module. There’s
+probably a way(in fact I’m pretty confident that I’m being an idiot
+here) but I can’t be bothered finding it ## conclusion mineflayer dev if
+you’re reading this for whatever reason please fix the problems relating
+to the constructor and consistent arguments to functions that take
+points. Although for the latter I understand if you can’t make it all
+consistent because it would be a breaking API change in all likelyhood.
+Overall I think the api is alright and I don’t have enough will power or
+brain cells to remake it for myself but I would certainly appreciate
+these pain points being addressed if they can.</p>
+
+        </div>
+    </div>
+    <div id="footer">
+    </div>
+</body>
+
+</html>

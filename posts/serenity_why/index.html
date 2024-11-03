@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- not sure if this is good or bad for mobile
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <title>Serenity pains · Pagwin's website</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/colors.css" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/index.xml">
+    <script type="module" src="/static/js/code_highlighting.mjs"></script>
+</head>
+
+<body class="light">
+    <!-- originally handled dark v light via js but decided it would be better to just do it all in css and have no toggle 8a7917a0cd34bd7637d9a9a8ad327e4b847cdeed is the last commit where I had the system setup -->
+    <div id="header">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/posts/">Blog Posts</a>
+        <a class="nav-link" href="/links/">Links</a>
+    </div>
+    <div id="content-outer">
+        <div id="content">
+            <h1
+                style="font-variant: small-caps;text-align: justify; -moz-text-align-last: center; text-align-last: center;">
+                Serenity pains</h1>
+            <div class="info">
+    2022-09-01
+</div>
+<hr>
+</hr>
+<p>This is the second blog article I’ve written dissing on how a library
+does something, the <a href="/blog/mineflayer_why">first time</a> being
+effectively “Mineflayer doesn’t do things the way I want it to and that
+annoys me”. This article will probably follow in that tradition but
+unlike the Mineflayer one where I would’ve been inconvenienced to do
+what I want with Serenity I need to make my code potentially unsound to
+do what I want.</p>
+<h2 id="what-is-serenity">What is Serenity?</h2>
+<p><a href="https://crates.io/crates/serenity">Serenity</a> is a rust
+crate that can be used to create discord bots. I’ve used it a couple of
+times without issue mainly for <a
+href="https://github.com/Pagwin-Fedora/DBMS">DBMS</a> and <a
+href="https://github.com/Pagwin-Fedora/discord-frame-yeet">frame
+yeet</a>, very professional names I know. However the issues come up
+when you want mutable state in the <a
+href="https://docs.rs/serenity/0.11.5/serenity/client/trait.EventHandler.html">event
+handler</a>.</p>
+<h2 id="no-mutable-self">No mutable self</h2>
+<p>For all the events in the event handler self is passed as a
+non-mutable reference. Which means you can’t change any state in your
+event handler. Serenity… why? Have you not considered the possibility
+that someone may want to initialize something in their event handler
+after the bot has started or to have the response to events change due
+to previous events?</p>
+<h2 id="yes-they-did-consider-the-possibility">Yes they did consider the
+possibility</h2>
+<p>It’s why they pass a <a
+href="https://docs.rs/serenity/0.11.5/serenity/prelude/struct.Context.html">Context</a>
+struct which has a field called data where data can be stored in a <a
+href="https://docs.rs/serenity/0.11.5/serenity/prelude/struct.TypeMap.html">TypeMap</a>
+which mostly solves the inability to have mutable state. Keyword
+<strong>mostly</strong></p>
+<h2 id="drop-the-state">Drop the state</h2>
+<p>The issue is what happens if the state being stored is attached to
+something else and you want the state to be dropped when that something
+else is dropped. Well in that case you just have to suffer in some way
+or another. You obviously need to implement the <a
+href="https://doc.rust-lang.org/std/ops/trait.Drop.html">Drop trait</a>
+which means the struct needs to store a way to refer to the TypeMap in
+itself. But Serenity doesn’t have a way to do that before you’ve
+constructed the client. The <a
+href="https://docs.rs/serenity/0.11.5/serenity/client/struct.ClientBuilder.html">ClientBuilder</a>
+has the type_map method if you want to provide one but that moves it
+which means you can’t hold onto a reference to it that can be used in
+our Drop implementation. The ClientBuilder also has a get_type_map
+method which gives a reference to it’s type map. But because it’s a
+reference we can’t give it to the thing that wants to potentially get
+rid of something in the TypeMap. Which leaves only ugly and uglier
+options for dealing with this.</p>
+<h2 id="ugly-solutions">Ugly solutions</h2>
+<p>The first solution to this problem is to tell serenity to go fuck
+itself and write unsafe code convert self to a mutable pointer which we
+mutate in the ready event to initialize state within the handler with
+the Arc&lt;RwLock<TypeMap>&gt; that’s provided by the Context struct.
+The second solution is to give up on having Drop clean up the TypeMap at
+the same time. Personally I think both of these solutions suck and wish
+that I wasn’t forced to pick for the program I ran into this problem
+for.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>This is the only Serenity specific problem I’ve run into using this
+library though so I’d say it’s a good library overall. So yeah, back to
+actually writing code instead of blog articles for now.</p>
+
+        </div>
+    </div>
+    <div id="footer">
+    </div>
+</body>
+
+</html>

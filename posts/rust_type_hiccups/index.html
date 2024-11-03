@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <!-- not sure if this is good or bad for mobile
+    <!--<meta name="viewport" content="width=device-width, initial-scale=1">-->
+    <title>Rust Type Hiccups · Pagwin's website</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/colors.css" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/index.xml">
+    <script type="module" src="/static/js/code_highlighting.mjs"></script>
+</head>
+
+<body class="light">
+    <!-- originally handled dark v light via js but decided it would be better to just do it all in css and have no toggle 8a7917a0cd34bd7637d9a9a8ad327e4b847cdeed is the last commit where I had the system setup -->
+    <div id="header">
+        <a class="nav-link" href="/">Home</a>
+        <a class="nav-link" href="/posts/">Blog Posts</a>
+        <a class="nav-link" href="/links/">Links</a>
+    </div>
+    <div id="content-outer">
+        <div id="content">
+            <h1
+                style="font-variant: small-caps;text-align: justify; -moz-text-align-last: center; text-align-last: center;">
+                Rust Type Hiccups</h1>
+            <div class="info">
+    2022-12-20
+</div>
+<hr>
+</hr>
+<h1 id="rust-type-hiccups">Rust type hiccups</h1>
+<p>This article is the result of running into annoyances in rust’s type
+system. These annoyances aren’t bugs as much as they are limitations
+caused by how rust’s type system is currently implemented. Interestingly
+one of these seems relatively easy to fix at first glance while the
+other is a problem whose root cause(s) have been around for a good few
+years and probably won’t be fixed for at least some ways into the
+future.</p>
+<h2 id="case-1-fromresultte-for-resultfromte-and-vice-versa-for-e">Case
+1: From&lt;Result&lt;T,E&gt;&gt; for Result&lt;From&lt;T&gt;,E&gt; and
+vice versa for E</h2>
+<p>Did you know that rust didn’t have this implemented for you? I
+certainly didn’t until about a week ago when I wanted to convert from a
+<code>Result&lt;String, Error&gt;</code> to a
+<code>Result&lt;(), Error&gt;</code> for the sake of convenience when
+returning from a function. Now you may think that this is the one which
+I think is the easy fix but if you thought that you’d be wrong.</p>
+<h3 id="why-this-seems-easy">Why this seems easy</h3>
+<p>If you don’t know rust or didn’t think about this that much yet you
+may wonder how this is easy. Well to answer that I think I’ll just show
+you the implementation.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span> <span class="op">&lt;</span>T<span class="op">,</span>U<span class="op">:</span><span class="bu">From</span><span class="op">&lt;</span>T<span class="op">&gt;,</span>E<span class="op">&gt;</span> <span class="bu">From</span><span class="op">&lt;</span><span class="dt">Result</span><span class="op">&lt;</span>T<span class="op">,</span>E<span class="op">&gt;&gt;</span> <span class="cf">for</span> <span class="dt">Result</span><span class="op">&lt;</span>U<span class="op">,</span>E<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">fn</span> from(val<span class="op">:</span><span class="dt">Result</span><span class="op">&lt;</span>T<span class="op">,</span>E<span class="op">&gt;</span>)<span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>	    val<span class="op">.</span>map(<span class="pp">U::</span>from)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>That’s it the entire definition and implementation of what I want in
+just 5 lines of code where 2 of them are just curly brackets. So why
+doesn’t that work?</p>
+<h3 id="the-motherfcking-identity-implementation">The motherf*cking
+identity implementation</h3>
+<p>Yeah, the issue is that rust implements
+<code>From&lt;T&gt; for T</code> so all types can be gotten from
+themselves. The issue with this is twofold 1. it means that U can be T
+which means that 2. the implementation we just wrote out before
+implements
+<code>From&lt;Result&lt;T, E&gt;&gt; for Result&lt;T, E&gt;</code> which
+is the identity which means we have two implementations of a trait on
+one type which rust doesn’t allow. By the way, if you want to make an
+error message more helpful in rust change the error message you get when
+you try this to point out that the issue is that U can be T.</p>
+<h3 id="can-we-just-tell-rust-to-not-implement-this-when-u-t">Can we
+just tell rust to not implement this when U = T?</h3>
+<p>Nope not a thing in rust at the moment and I remember(perhaps
+incorrectly) that <a
+href="https://github.com/rust-lang/rust/issues/42721">negative
+bounds</a> are for traits but not types generally.</p>
+<h3 id="what-about-specialization">What about <a
+href="https://doc.rust-lang.org/unstable-book/language-features/specialization.html">specialization</a>?</h3>
+<p>Nope 1. right now the <a
+href="https://doc.rust-lang.org/unstable-book/language-features/min-specialization.html">current
+subset of specialization</a> that’s considered stable doesn’t allow for
+implementation in a case of a generic popping up twice which is the
+exact issue we have here 2. the identity implementation From has doesn’t
+have the default keyword so if you wanna override it you’re kinda
+fucked(unless you’re trying to modify the stdlib like I was).</p>
+<h2 id="so-what-was-the-other-hiccup">So what was the other hiccup?</h2>
+<p>Oh yeah, there was a separate hiccup. Yeah that hiccup came from me
+trying to do SI-derived units via const generics, my minimum viable
+product version looked something like this</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode rs"><code class="sourceCode rust"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> Measure<span class="op">&lt;</span><span class="kw">const</span> km<span class="op">:</span><span class="dt">i16</span><span class="op">,</span> <span class="kw">const</span> sec<span class="op">:</span><span class="dt">i16</span><span class="op">,</span> <span class="kw">const</span> kg<span class="op">:</span><span class="dt">i16</span><span class="op">&gt;{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    amount<span class="op">:</span><span class="dt">f64</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">impl</span><span class="op">&lt;</span><span class="kw">const</span> km1<span class="op">:</span><span class="dt">i16</span><span class="op">,</span> <span class="kw">const</span> sec1<span class="op">:</span><span class="dt">i16</span><span class="op">,</span><span class="kw">const</span> kg1<span class="op">:</span><span class="dt">i16</span><span class="op">,</span><span class="kw">const</span> km2<span class="op">:</span><span class="dt">i16</span><span class="op">,</span> <span class="kw">const</span> sec2<span class="op">:</span><span class="dt">i16</span><span class="op">,</span><span class="kw">const</span> kg2<span class="op">:</span><span class="dt">i16</span><span class="op">&gt;</span> <span class="bu">Div</span><span class="op">&lt;</span>Rhs<span class="op">=</span>Measure<span class="op">&lt;</span>km2<span class="op">,</span>sec2<span class="op">,</span>kg2<span class="op">&gt;&gt;</span> <span class="cf">for</span> Measure<span class="op">&lt;</span>km1<span class="op">,</span>sec1<span class="op">,</span>kg1<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>	<span class="co">// Don&#39;t mind the curly brackets rust compiler wanted me to put them there for whatever reason</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>	<span class="kw">type</span> Output <span class="op">=</span> Measure<span class="op">&lt;{</span>km1<span class="op">-</span>km2<span class="op">},{</span>sec1<span class="op">-</span>sec2<span class="op">},{</span>kg1<span class="op">-</span>kg2<span class="op">}&gt;;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>	<span class="kw">fn</span> div(<span class="kw">self</span><span class="op">,</span> rhs<span class="op">:</span> <span class="dt">Self</span>) <span class="op">-&gt;</span> <span class="dt">Self</span><span class="pp">::</span>Output <span class="op">{</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>	    <span class="dt">Self</span><span class="pp">::</span>Output<span class="op">{</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>		    amount<span class="op">:</span> <span class="kw">self</span><span class="op">.</span>amount<span class="op">/</span>rhs<span class="op">.</span>amount</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>	    <span class="op">}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>	<span class="op">}</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>and had I not run into my type hiccup Mul would’ve been implemented
+similarly and Add and Sub would’ve been trivial. Alas, rust doesn’t
+allow this to compile because
+<code>cannot perform const operation using kg1</code> and so on for all
+the other const generics… what? What do you mean I can’t do a const
+operation with a const wtf <del>I also got an error that said something
+about how an associated type wasn’t allowed when I set Rhs but
+shhhhh</del>. Yeah in the compiler I imagine that allowing for
+calculating const generics with values that are const/const generics is
+relatively easy so I hope that does get improved at some point.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>I like rust’s type system and most of the time it does a pretty good
+job, however when it doesn’t work it’s annoying. These 2 examples being
+particularly unsatisfying because they’re so natural but oh well
+hopefully rust is able to make them work in the future.</p>
+
+        </div>
+    </div>
+    <div id="footer">
+    </div>
+</body>
+
+</html>

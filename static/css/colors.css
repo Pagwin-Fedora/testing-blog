@@ -1,4 +1,4 @@
-@layer baseline, print;
+@layer baseline, baseline-raised, print;
 /* https://color.adobe.com/create/color-contrast-analyzer */
 /*dark theme*/
 @layer baseline{
@@ -58,6 +58,12 @@
 }
 }
 }
+@layer baseline-raised {
+.nav-link {
+    color: var(--nav-link-color);
+    background-color: var(--nav-link-bg-color);
+}
+}
 @layer baseline{
 body {
     background: var(--bg-color);
@@ -68,10 +74,6 @@ body {
 :focus-visible {
   outline: 2px solid var(--focus-outline-color);
   border-radius: 0.25rem;
-}
-.nav-link {
-    color: var(--nav-link-color) !important;
-    background-color: var(--nav-link-bg-color);
 }
 
 a {
@@ -105,6 +107,7 @@ pre:has( > code) {
   background-color: var(--highlight-bg);
   color: var(--highlight-fg);
 }
+
 }
 @media print {
 @layer print{

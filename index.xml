@@ -1,20 +1,129 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom">
-    <channel>
-        <title>Pagwin's Blog</title>
-        <link>https://pagwin.xyz/</link>
-        <description>All of pagwin's blog posts</description>
-        <generator>PSB</generator>
-        <language>en-us</language>
-        <atom:link href="https://pagwin.xyz/index.xml" rel="self" type="application/rss+xml"/>
-<!--
-        <item>
-            <title></title>
-            <link><>
-            <pubDate></pubDate>
-            <guid></guid>
-            <description></description>
-        </item>
--->
-    </channel>
-</rss>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <title>Pagwin's Blog</title>
+    <link href="https://pagwin.xyz/"/>
+    <updated>2024-11-29T00:57:01.156318199Z</updated>
+    <generator uri="https://git.pagwin.xyz/Pagwin/psb">PSB</generator>
+    <id>https://pagwin.xyz/posts</id>
+    <link href="https://pagwin.xyz/index.xml" rel="self" type="application/rss+xml"/>
+    <author>
+        <name>Pagwin</name>
+    </author>
+    <entry>
+        <title>Hello</title>
+        <link href="/posts/hello/?utm_source=web_feed"/>
+        <updated>2024-08-01T00:00:00Z</updated>
+        <summary>this is a description</summary>
+        <id>urn:urn-1:hello</id>
+    </entry>
+    <entry>
+        <title>Bits bobs and notes from HackBU 2024</title>
+        <link href="/posts/HackBU2024/?utm_source=web_feed"/>
+        <updated>2024-02-20T00:00:00Z</updated>
+        <summary>A summary of my experience, lessons and thoughts on the HackBU 2024
+hackathon</summary>
+        <id>urn:urn-1:bitsbobsandnotesfromhackbu2024</id>
+    </entry>
+    <entry>
+        <title>Micro blogs (1)</title>
+        <link href="/posts/micro_blogs/?utm_source=web_feed"/>
+        <updated>2024-01-30T00:00:00Z</updated>
+        <summary>a bunch of thoughts ideas and what not that aren’t worth of full blogs
+but that I still want to write down</summary>
+        <id>urn:urn-1:microblogs1</id>
+    </entry>
+    <entry>
+        <title>Speeding through misc stuff</title>
+        <link href="/posts/speedrun/?utm_source=web_feed"/>
+        <updated>2023-11-11T00:00:00Z</updated>
+        <summary>I want to get out a bunch of stuff that’s in the git repo or my head so
+I’m dumping it here</summary>
+        <id>urn:urn-1:speedingthroughmiscstuff</id>
+    </entry>
+    <entry>
+        <title>Fractions Sidequest</title>
+        <link href="/posts/fractions_sidequest/?utm_source=web_feed"/>
+        <updated>2023-08-08T00:00:00Z</updated>
+        <summary>In my last blog I wrote about my explorations on a new number type that
+specifies fractions rather than approximate binimal(? decimal has a
+latin root for 10 but floating point uses binary so what word?) or
+integers</summary>
+        <id>urn:urn-1:fractionssidequest</id>
+    </entry>
+    <entry>
+        <title>Fractions</title>
+        <link href="/posts/fractions/?utm_source=web_feed"/>
+        <updated>2023-08-07T00:00:00Z</updated>
+        <summary>So I’ve been thinking about representing fractions/rational numbers in
+binary effieciently…</summary>
+        <id>urn:urn-1:fractions</id>
+    </entry>
+    <entry>
+        <title>Rust Type Hiccups</title>
+        <link href="/posts/rust_type_hiccups/?utm_source=web_feed"/>
+        <updated>2022-12-20T00:00:00Z</updated>
+        <summary>A couple of hiccups I’ve run into with rust’s type system</summary>
+        <id>urn:urn-1:rusttypehiccups</id>
+    </entry>
+    <entry>
+        <title>Rust Match and Enums</title>
+        <link href="/posts/rust_enums/?utm_source=web_feed"/>
+        <updated>2022-09-06T00:00:00Z</updated>
+        <summary>A blog article I wrote to win a dumb argument</summary>
+        <id>urn:urn-1:rustmatchandenums</id>
+    </entry>
+    <entry>
+        <title>Yeeting the distractions and setting goals</title>
+        <link href="/posts/invidious_and_goals/?utm_source=web_feed"/>
+        <updated>2022-09-02T00:00:00Z</updated>
+        <summary>So recently I’ve begun work on trying to remove distractions so I’m more
+likely to work on productive stuff and this blog is effectively a
+lightning round of things I did to accomplish that</summary>
+        <id>urn:urn-1:yeetingthedistractionsandsettinggoals</id>
+    </entry>
+    <entry>
+        <title>Serenity pains</title>
+        <link href="/posts/serenity_why/?utm_source=web_feed"/>
+        <updated>2022-09-01T00:00:00Z</updated>
+        <summary>A rant against how serenity forces the developer to handle state</summary>
+        <id>urn:urn-1:serenitypains</id>
+    </entry>
+    <entry>
+        <title>Pogo so far</title>
+        <link href="/posts/pogo_so_far/?utm_source=web_feed"/>
+        <updated>2022-01-31T00:00:00Z</updated>
+        <summary>A summary of the work I’ve done on pogo so far and where I intend to go
+with it</summary>
+        <id>urn:urn-1:pogosofar</id>
+    </entry>
+    <entry>
+        <title>Setting up CD for this site</title>
+        <link href="/posts/gh_actions/?utm_source=web_feed"/>
+        <updated>2022-01-22T00:00:00Z</updated>
+        <summary>How I setup Github actions to automatically update this site</summary>
+        <id>urn:urn-1:settingupcdforthissite</id>
+    </entry>
+    <entry>
+        <title>A universal tutorial on the basics for every* programming language</title>
+        <link href="/posts/universal_proc_tut/?utm_source=web_feed"/>
+        <updated>2021-07-03T00:00:00Z</updated>
+        <summary>A tutorial that covers all the basic concepts that procedural languages
+commonly have</summary>
+        <id>urn:urn-1:auniversaltutorialonthebasicsforeveryprogramminglanguage</id>
+    </entry>
+    <entry>
+        <title>Mineflayer pains</title>
+        <link href="/posts/mineflayer_why/?utm_source=web_feed"/>
+        <updated>2021-01-10T00:00:00Z</updated>
+        <summary>Describing all the pains with mineflayer I’ve dealt with so far</summary>
+        <id>urn:urn-1:mineflayerpains</id>
+    </entry>
+    <entry>
+        <title>How this website was made</title>
+        <link href="/posts/how/?utm_source=web_feed"/>
+        <updated>2020-09-30T00:00:00Z</updated>
+        <summary>It’s with hugo and the rest of this is probably gonna be short and
+boring viewer discretion is advised</summary>
+        <id>urn:urn-1:howthiswebsitewasmade</id>
+    </entry>
+</feed>

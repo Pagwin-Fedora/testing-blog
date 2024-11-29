@@ -11,7 +11,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
     <meta name="theme-color" content="#1c1b19" media="(prefers-color-scheme: dark)">
     <meta name="theme-color" content="#e2e3e5" media="(prefers-color-scheme: light)">
     <link rel="stylesheet" type="text/css" href="/static/css/layout.css" />
@@ -31,7 +32,7 @@
         <main id="content">
             <header>
     <h1 style="font-variant: small-caps;">Fractions Sidequest</h1>
-    <div class="info">
+    <div class=" info">
         2023-08-08
     </div>
 </header>
@@ -103,7 +104,7 @@ changed for clarity)</p>
 <span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>This code feels bad even from a code quality point of view but idk
 why, regardless it’s hilariously bad performance wise.</p>
-<video width="700" height="400" controls src="/video/frac_gen_v1.mp4">
+<video width="700" height="400" controls src="/static/video/frac_gen_v1.mp4">
 </video>
 <p>Considering that we’re “only” doing addition this is incredibly slow.
 Slower than addition in (insert butt of the joke language of this week
@@ -184,7 +185,7 @@ using multiple threads from a pool.</p>
 <span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co">// Frac is the same as before</span></span></code></pre></div>
 <p>looks good at first glance(actual version code quality is bad but
 blog version seems alright). What happens when we run it?</p>
-<video width="700" height="400" controls src="/video/frac_gen_v2.mp4">
+<video width="700" height="400" controls src="/static/video/frac_gen_v2.mp4">
 </video>
 <p>Oh… we run out of memory… or well we run out of 30 gigabytes of
 memory because I set a limit to avoid effecting the other stuff running
@@ -232,7 +233,7 @@ refactor.</p>
 <span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">// Frac now uses 32 bit ints rather than 16 bit ints due to an overflow</span></span></code></pre></div>
 <p>This solves the whole running out of memory thing. A funny side
 effect is that now it’s even faster(even though it’s 1 thread).</p>
-<video width="700" height="400" controls src="/video/frac_gen_v3.mp4">
+<video width="700" height="400" controls src="/static/video/frac_gen_v3.mp4">
 </video>
 <p>So that was fun going through and making all this work out well, now
 I can generate gigabytes upon gigabytes of fractions with ease.</p>
@@ -250,6 +251,11 @@ website’s git repo doing nothing.</p>
 repo with the generator</a></p>
 
         </main>
+        <footer style="margin:20px;">
+            <!-- don't bother with anchor on outside anchor is inside svg-->
+            <a href="/index.xml"> <object width="100" height="100" class="icon"
+                    data="/static/images/rss.svg"></object></a>
+        </footer>
     </div>
 </body>
 

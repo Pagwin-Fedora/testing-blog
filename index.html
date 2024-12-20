@@ -24,13 +24,14 @@
 <body>
     <!-- originally handled dark v light via js but decided it would be better to just do it all in css and have no toggle 8a7917a0cd34bd7637d9a9a8ad327e4b847cdeed is the last commit where I had the system setup -->
     <header id="header">
-        <a class="nav-link" rel="prefetch" href="/">Home</a>
-        <a class="nav-link" rel="prefetch" href="/posts/">All Posts</a>
-        <a class="nav-link" href="/links/">Other places I'm at</a>
+        <a class="icon" rel="prefetch" href="/"><object class="icon svg" data="/static/images/house.svg">
+                <a href="/" class="nav-link">home</a>
+            </object></a>
         <div class="back-shover"></div>
-        <a class="icon" href="/index.xml"> <object width="100" height="100" class="icon svg"
-                data="/static/images/rss.svg">atom/rss/web
-                feed</object></a>
+        <a class="icon" href="/index.xml"> <object class="icon svg" data="/static/images/rss.svg">
+                <a href="/index.xml" class="nav-link">web feed</a>
+            </object>
+        </a>
     </header>
     <div id="content-outer">
         <div id="content">
@@ -61,6 +62,100 @@ hackathon</p>
         <dd>
             <p>a bunch of thoughts ideas and what not that aren’t worth of full blogs
 but that I still want to write down</p>
+        </dd>
+    </div>
+    <div>
+        <dt class="post-title-item"><a href="/posts/speedrun/">Speeding through misc stuff</a> </dt>
+        <dd class="dt-subtitle"><time datetime="2023-11-11T00:00:00Z">2023-11-11</time></dd>
+        <dd>
+            <p>I want to get out a bunch of stuff that’s in the git repo or my head so
+I’m dumping it here</p>
+        </dd>
+    </div>
+    <div>
+        <dt class="post-title-item"><a href="/posts/fractions_sidequest/">Fractions Sidequest</a> </dt>
+        <dd class="dt-subtitle"><time datetime="2023-08-08T00:00:00Z">2023-08-08</time></dd>
+        <dd>
+            <p>In my last blog I wrote about my explorations on a new number type that
+specifies fractions rather than approximate binimal(? decimal has a
+latin root for 10 but floating point uses binary so what word?) or
+integers</p>
+        </dd>
+    </div>
+    <div>
+        <dt class="post-title-item"><a href="/posts/fractions/">Fractions</a> </dt>
+        <dd class="dt-subtitle"><time datetime="2023-08-07T00:00:00Z">2023-08-07</time></dd>
+        <dd>
+            <p>So I’ve been thinking about representing fractions/rational numbers in
+binary effieciently…</p>
+        </dd>
+    </div>
+    <div>
+        <dt class="post-title-item"><a href="/posts/rust_type_hiccups/">Rust Type Hiccups</a> </dt>
+        <dd class="dt-subtitle"><time datetime="2022-12-20T00:00:00Z">2022-12-20</time></dd>
+        <dd>
+            <p>A couple of hiccups I’ve run into with rust’s type system</p>
+        </dd>
+    </div>
+    <div>
+        <dt class="post-title-item"><a href="/posts/rust_enums/">Rust Match and Enums</a> </dt>
+        <dd class="dt-subtitle"><time datetime="2022-09-06T00:00:00Z">2022-09-06</time></dd>
+        <dd>
+            <p>A blog article I wrote to win a dumb argument</p>
+        </dd>
+    </div>
+    <div>
+        <dt class="post-title-item"><a href="/posts/invidious_and_goals/">Yeeting the distractions and setting goals</a> </dt>
+        <dd class="dt-subtitle"><time datetime="2022-09-02T00:00:00Z">2022-09-02</time></dd>
+        <dd>
+            <p>So recently I’ve begun work on trying to remove distractions so I’m more
+likely to work on productive stuff and this blog is effectively a
+lightning round of things I did to accomplish that</p>
+        </dd>
+    </div>
+    <div>
+        <dt class="post-title-item"><a href="/posts/serenity_why/">Serenity pains</a> </dt>
+        <dd class="dt-subtitle"><time datetime="2022-09-01T00:00:00Z">2022-09-01</time></dd>
+        <dd>
+            <p>A rant against how serenity forces the developer to handle state</p>
+        </dd>
+    </div>
+    <div>
+        <dt class="post-title-item"><a href="/posts/pogo_so_far/">Pogo so far</a> </dt>
+        <dd class="dt-subtitle"><time datetime="2022-01-31T00:00:00Z">2022-01-31</time></dd>
+        <dd>
+            <p>A summary of the work I’ve done on pogo so far and where I intend to go
+with it</p>
+        </dd>
+    </div>
+    <div>
+        <dt class="post-title-item"><a href="/posts/gh_actions/">Setting up CD for this site</a> </dt>
+        <dd class="dt-subtitle"><time datetime="2022-01-22T00:00:00Z">2022-01-22</time></dd>
+        <dd>
+            <p>How I setup Github actions to automatically update this site</p>
+        </dd>
+    </div>
+    <div>
+        <dt class="post-title-item"><a href="/posts/universal_proc_tut/">A universal tutorial on the basics for every* programming language</a> </dt>
+        <dd class="dt-subtitle"><time datetime="2021-07-03T00:00:00Z">2021-07-03</time></dd>
+        <dd>
+            <p>A tutorial that covers all the basic concepts that procedural languages
+commonly have</p>
+        </dd>
+    </div>
+    <div>
+        <dt class="post-title-item"><a href="/posts/mineflayer_why/">Mineflayer pains</a> </dt>
+        <dd class="dt-subtitle"><time datetime="2021-01-10T00:00:00Z">2021-01-10</time></dd>
+        <dd>
+            <p>Describing all the pains with mineflayer I’ve dealt with so far</p>
+        </dd>
+    </div>
+    <div>
+        <dt class="post-title-item"><a href="/posts/how/">How this website was made</a> </dt>
+        <dd class="dt-subtitle"><time datetime="2020-09-30T00:00:00Z">2020-09-30</time></dd>
+        <dd>
+            <p>It’s with hugo and the rest of this is probably gonna be short and
+boring viewer discretion is advised</p>
         </dd>
     </div>
 </dl>
